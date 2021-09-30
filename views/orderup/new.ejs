@@ -1,0 +1,22 @@
+<%- include('../partials/header') %>
+
+<h1>Start Group Order</h1>
+<form>
+    <label>Restaurant</label>
+    <select name = 'restaurant'>
+        <% restaurants.forEach(r => { %>
+            <option value = <%=`${r.restaurant_name}`%> 
+                ><%=`${r.restaurant_name}`%></option>
+     
+            <% }) %>
+    </select>
+
+    <label>Restaurant</label>
+    <label>Restaurant</label>
+    <label>Restaurant</label>
+
+
+
+</form>
+
+<%- include('../partials/footer') %>
