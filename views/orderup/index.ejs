@@ -1,8 +1,11 @@
 <%- include('../partials/header') %>
 
+<form action="/orderup/new" method="POST">
+    <label>Enter Your Zipcode</label>
+    <input type="text" name="zipcode"  value='91789'>
+    <input type="submit" value="Start Group Order">
+</form>
 
 
-    <div>
-        <a href="/orderup/new">Start Group Order</a>
-    </div>
+
 <%- include('../partials/footer') %>

@@ -1,6 +1,81 @@
 <%- include('../partials/header') %>
 
 <h1>Checkout</h1>
+<a href="/orderup/<%= order._id %>/order ">Back To Menu</a>
+
+<h2>
+    <%= `${restaurant.restaurant_name}` %>
+</h2>
+<p>
+    <%= `${restaurant.address.street}` %> <br>
+        <%= `${restaurant.address.city}, ${restaurant.address.state} ${restaurant.address.postal_code}` %><br>
+            <%= `${restaurant.restaurant_phone}` %> <br>
+</p>
+<%= console.log(user.googleId) %>
+
+<ul>
+    <% userOrders.forEach(userOrder => { %>
+        <li><h3><%= `${users.find(x => x.googleId === userOrder.userId).name}`%></h2></li>
+        <li><h5><%= `${users.find(x => x.googleId === userOrder.userId).email}`%></h4> </li>
+        
+        <table>
+            <% if (Object.keys(userOrder.order).length > 0) { %>
+                <tr><th>Remove</th><th>Description</th><th>Price</th><th>Quantity</th><th>Subtotal</th></tr>            
+                        <% for (const d in userOrder.order) { %>
+                            <tr>
+                                <% if (userOrder.userId === user.googleId) { %>
+                                    <td>
+                                        <form action="/orderup/<%= order._id %>/checkout?_method=DELETE" method="POST">
+                                            <button type='submit' class='remove' name='delete' value= <%=`${d}`%>   >🗑</button>
+                                        </form>
+                                    </td> 
+
+                                    <% } else { %>
+                                        <td></td>
+                                    
+                                    <% } %>
+ 
+                            <td><%= `${d.toString().split('_').join(' ')} ` %></td>
+                            <td>
+                                <% restaurant.menus[0].menu_sections.forEach(section => { %>
+                                 <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price.toFixed(2) : ''}` %> 
+                                <% }) %>
+                            </td>
+                            <td><%= `${userOrder.order[d]}` %> </td>
+                            <td><%= `${userOrder.order[d]*}` %> </td>
+    
+                        </tr>                              
+                            <% }; %>                
+                <% } else { %>
+                    <h5>They have not placed their order yet</h5>
+                    <% } %>
+                
+            </table>
+
+        <% }) %>
+<h2 align='center'>Total Orders Combined</h2>
+        <table>
+            <% if (Object.keys(totalOrder).length > 0) { %>
+                <tr><th>Description</th><th>Price</th><th>Quantity</th></tr>            
+                        <% for (const d in totalOrder) { %>
+                            <tr>
+                            <td><%= `${d.toString().split('_').join(' ')} ` %></td>
+                            <td>
+                                <% restaurant.menus[0].menu_sections.forEach(section => { %>
+                                 <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price.toFixed(2) : ''}` %> 
+                                <% }) %>
+                            </td>
+                            <td><%= `${totalOrder[d]}` %> </td>
+    
+                        </tr>                              
+                            <% }; %>                
+                <% } else { %>
+                    <h5>They have not placed their order yet</h5>
+                    <% } %>
+                
+            </table>
+        
+</ul>
 
 
 

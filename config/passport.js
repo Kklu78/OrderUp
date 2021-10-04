@@ -13,7 +13,7 @@ passport.use(new GoogleStrategy({
   function(accessToken, refreshToken, profile, cb) {
     // <- verify callback function, this function is called
     // whenever the user has been logged in using the oAuth
-    console.log(profile, "<----- Profile"); // <--- Is going to be the users that just logged information from google
+    // console.log(profile, "<----- Profile"); // <--- Is going to be the users that just logged information from google
 
 
     User.findOne({ googleId: profile.id }, function (err, userDoc) {

@@ -35,13 +35,11 @@ body > main {
   flex-direction: column;
   align-items: center;
   background-color: #ffffff;
-  padding: 20px;
+  /* padding: 20px; */
   overflow-y: scroll;
 }
 
-body > main h1:first-child {
-  margin-bottom: 50px;
-}
+
 
 nav > a {
   margin: 10px;
@@ -60,19 +58,26 @@ nav > a.active {
   color: white;
 }
 
-#new-form {
+#new-form, .form {
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: repeat(2, minmax(auto, 22rem));
+  grid-template-columns: repeat(2, minmax(auto, 20rem));
+  margin: 4px;
 }
 
-#new-form *,  #add-destinations-form *, #ticket * {
+#new-form *, .form * {
   font-size: 20px;
   padding: 5px;
   border-radius: 5px;
 }
 
 #new-form input[type="submit"] {
+  grid-column: span 2;
+  width: 10rem;
+  margin-left: auto;
+}
+
+.form input[type="submit"] {
   grid-column: span 2;
   width: 10rem;
   margin-left: auto;
@@ -141,26 +146,9 @@ font-size: 25px;
   margin-top: 2rem;
 }
 
-.parent {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(9, 1fr);
-  grid-column-gap: 10px;
-  grid-row-gap: 10px;
-  }
-
-.filled {
-  opacity: 0.5;
-  font-weight: normal;
-}
-
-.open {
-  font-weight: bold;
-}
-
-h2 {
+/* h2 {
   margin-bottom: 25px;
-}
+} */
 
 #purchase, #return {
   background-color: #5c3687;
@@ -182,16 +170,87 @@ h2 {
   text-align: center;
 }
 
-#tickets, #destinations {
-  /* margin: 20px; */
+
+input[type='checkbox'] {
+  margin-top: 1rem;
+  width:25px;
+  height:25px;
+
+}
+
+p {
+  text-align: center;
+}
+
+.qty {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
+
+
+.sections {
+  display:inline-block;
+  grid-gap: 10px;
+  /* margin: 100px 0 20px 0; */
+  padding: 5px;
   /* border: 1px solid black; */
+  list-style:none;
+  width: 1200px;
+  margin-left: 100px;
+}
+
+.menuItem {
+  box-sizing:border-box;
+  float: left;
+  text-align: center;
+  border: 1px solid black;
+  width: 250px;
+  height: 125px;
+  margin: 5px;
+}
+
+ul {
+  list-style:none;
 
 }
 
-#ticketsTable {
-  margin: 20px 0 0 0;
-  
+.orderForm {
+  text-align: left;
 }
 
+.vl {
+  border-left: 5px solid rgba(72, 72, 72, 0.468);
+  height: 100%;
+  position: relative;
+  left: 65%;
+}
 
+.hl {
+  border-top: 3px solid rgba(0, 0, 0, 0.694);
+  width: 85%;
+  position: relative;
+  /* top: 245px; */
+}
 
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.orderForm, .vl, .cart {
+  float: left;
+  width: auto;
+}
+
+.remove {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+
+}

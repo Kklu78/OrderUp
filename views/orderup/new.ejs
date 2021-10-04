@@ -1,22 +1,40 @@
 <%- include('../partials/header') %>
 
-<h1>Start Group Order</h1>
-<form>
-    <label>Restaurant</label>
-    <select name = 'restaurant'>
-        <% restaurants.forEach(r => { %>
-            <option value = <%=`${r.restaurant_name}`%> 
-                ><%=`${r.restaurant_name}`%></option>
-     
-            <% }) %>
-    </select>
+    <form action="/orderup/order" method="POST">
+        <%= console.log(friendsList) %> 
+        <% friendsList.forEach(f=> { %>           
+            
+            <div class="form">
+                <div>
+                    <label>
+                        <%= `${f.name}` %>
+                    </label>
+                    <br>
+                    <label>
+                        <%= `${f.email}` %>
+                    </label>
+                </div> 
+                <input type="checkbox" name=<%=`${f._id}`%>  checked>
+            </div>
+            <% })%>
 
-    <label>Restaurant</label>
-    <label>Restaurant</label>
-    <label>Restaurant</label>
+            <div class="form">
+                <label>Restaurant</label>
+                <select name='restaurantId'>
+                    <% restaurants.forEach(r=> { %>
+                        <option value=<%=`${r.restaurant_id}`%>
+                            ><%=`${r.restaurant_name}`%>
+                        </option>
 
+                        <% }) %>
+                </select>
 
+                <label>Order Date</label>
+                <input type="datetime-local" name="datetime" id="datetime" value= <%=`${new Date().toISOString().slice(0,16)}`%>>
 
-</form>
+                <input type="submit" value='Start Order'>
+            </div>
+                
+    </form>
 
-<%- include('../partials/footer') %>
+    <%- include('../partials/footer') %>

@@ -4,7 +4,11 @@ var orderupCtrl = require('../controllers/orderup');
 
 // GET /user
 router.get('/orderup', orderupCtrl.index);
-router.post('/facts', isLoggedIn, orderupCtrl.addFact);
+router.get('/orderup/:id/order',isLoggedIn, orderupCtrl.newPage)
+router.get('/orderup/:id/checkout',isLoggedIn, orderupCtrl.checkout)
+
+
+
 
 
 // Authorizing the user to use a route
@@ -17,7 +21,11 @@ function isLoggedIn(req, res, next) {
 	res.redirect('/auth/google');
 }
 
-router.get('/orderup/new', orderupCtrl.startOrder);
+router.post('/orderup/new', isLoggedIn, orderupCtrl.startOrder);
+router.post('/orderup/order',isLoggedIn, orderupCtrl.selectRetaurant);
+router.post('/orderup/:id/checkout',isLoggedIn, orderupCtrl.checkoutOrder);
+router.delete('/orderup/:id/order',isLoggedIn, orderupCtrl.removeItem);
+router.delete('/orderup/:id/checkout',isLoggedIn, orderupCtrl.removeItemCheckout);
 
 
 module.exports = router;

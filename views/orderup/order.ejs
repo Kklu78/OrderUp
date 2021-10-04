@@ -1,5 +1,89 @@
 <%- include('../partials/header') %>
 
-<h1></h1>
+    <h1>
+        <%= `${restaurant.restaurant_name}` %>
+    </h1>
+    <p>
+        <%= `${restaurant.address.street}` %> <br>
+            <%= `${restaurant.address.city}, ${restaurant.address.state} ${restaurant.address.postal_code}` %><br>
+                <%= `${restaurant.restaurant_phone}` %> <br>
+    </p>
+    <div class='hl'></div>
+    <div class="row">
+    <form class="orderform" action="/orderup/<%= order._id %>/checkout" method="POST">
+        <% restaurant.menus[0].menu_sections.forEach(section=> { %>
 
-<%- include('../partials/footer') %>
+            <div class='sections'>
+            <h2>
+                <%=`${section.section_name}`%>
+            </h2>
+            
+            <ul>
+                <% section.menu_items.forEach(item=> { %>
+                    <li class='menuItem'>
+                        <p>
+                            <%=`${item.name}`%>
+                        </p>
+                        <p>
+                            <%=`$${item.price.toFixed(2)}`%>
+                        </p>
+                        <div class='qtyAll'>
+                            <input type='button'
+                                onclick="this.nextElementSibling.value > 0 ?this.nextElementSibling.value = Number(this.nextElementSibling.value)-1 : null"
+                                value='-' class='minus'>
+                            <input type='text' name=<%=`${item.name.split(' ').join('_')}`%> value='0' class='qty'>
+                            <input type='button'
+                                onclick="this.previousElementSibling.value = Number(this.previousElementSibling.value)+1"
+                                value='+' class='plus'>
+                        </div>
+                    </li>
+
+                    <% }) %>
+
+            </ul>
+        </div>
+            <% }) %>
+            <input type="submit" name="update" value='Update'>
+            <input type="submit" name="submit" value='Submit Order'>
+
+    </form>
+<!-- <div class='vl'></div> -->
+<div class="cart">
+    <h2>Cart</h2>
+    <table>
+        <% if (Object.keys(userOrder.order).length > 0) { %>
+            <tr><th>Remove</th><th>Description</th><th>Price</th><th>Quantity</th></tr>            
+                    <% for (const d in userOrder.order) { %>
+                        <tr>
+                        <td>
+                            <form action="/orderup/<%= order._id %>/order?_method=DELETE" method="POST">
+                                <button type='submit' class='remove' name='delete' value= <%=`${d}`%>   >🗑</button>
+                            </form>
+                        </td>  
+                        <td><%= `${d.toString().split('_').join(' ')} ` %></td>
+                        <td>
+                            <% restaurant.menus[0].menu_sections.forEach(section => { %>
+                             <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price.toFixed(2) : ''}` %> 
+                            <% }) %>
+                        </td>
+                        <td><%= `${userOrder.order[d]}` %> </td>
+
+                    </tr>                              
+                        <% }; %>                
+            <% } else { %>
+                <h5>No Items in Cart</h5>
+                <% } %>
+            
+        </table>
+
+
+
+
+</div>
+
+</div>
+
+
+
+
+    <%- include('../partials/footer') %>

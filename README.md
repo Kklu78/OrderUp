@@ -1,6 +1,9 @@
 # passport-boilerplate
 
 
+Trello: https://trello.com/invite/b/NNzBOmWd/c3ae83bc37504fd9574224ecc4b92238/order-up
+
+
 This is your passport boilerplate.
 
 ## Setup 
@@ -32,3 +35,5 @@ This is your passport boilerplate.
 #### Make a commit 
 
 ```git commit -m "setup up oauth and User Model"```
+
+
