@@ -1,11 +1,53 @@
 <%- include('../partials/header') %>
 
-<form action="/orderup/new" method="POST">
-    <label>Enter Your Zipcode</label>
-    <input type="text" name="zipcode"  value='91789'>
-    <input type="submit" value="Start Group Order">
-</form>
+    <form action="/orderup/new" method="POST">
+        <label>Enter Your Zipcode</label>
+        <input type="text" name="zipcode" value='91789'>
+        <input type="submit" value="Start Group Order">
+    </form>
+    <%= console.log('allUserOrders') %>
+        <% if (user) { %>
+            <table>
+                <tr>
+                    <th text-align='left'>Restaurant</th>
+                    <th>User List</th>
+                    <th>Items in Cart</th>
+                    <th>Link</th>
+                </tr>
+                <% userOrders.forEach(order=> { %>
+                    <tr>
+                        <td text-align='left'>
+                            <%= restaurants.find(x=> x.restaurant_id.toString() === mainOrders.find(y =>
+                                y._id.toString() ===
+                                order.orderId.toString()).restaurantId.toString()).restaurant_name%>
+                        </td>
+                        <td>
+                            <table>
+                                <% mainOrders.find(y=> y._id.toString() ===
+                                    order.orderId.toString()).userOrders.forEach(u => { %>
+                                    <%let friend=users.find(x=> x._id.toString() === allUserOrders.find(z =>
+                                        z._id.toString() === u.toString()).userId.toString())%>
+                                        <tr>
+                                            <td>
+                                                <%=friend.name%>
+                                            </td>
 
+                                            <td>
+                                                <%=friend.email%>
+                                            </td>
+                                        </tr>
 
+                                        <% }) %>
+                            </table>
+                        </td>
+                        <td>  </td>
+                        <td><a href="/orderup/<%= order.orderId %>/order ">Link</a></td>
+                    </tr>
+                    <% }) %>
+            </table>
+            <% } else { %>
+                <a href="/auth/google" <%- title==='Login with Google' ? 'class="active"' : '' %>> Please Login to
+                    Continue</a>
+                <% } %>
 
-<%- include('../partials/footer') %>
+                    <%- include('../partials/footer') %>

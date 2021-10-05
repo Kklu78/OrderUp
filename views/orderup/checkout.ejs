@@ -11,19 +11,18 @@
         <%= `${restaurant.address.city}, ${restaurant.address.state} ${restaurant.address.postal_code}` %><br>
             <%= `${restaurant.restaurant_phone}` %> <br>
 </p>
-<%= console.log(user.googleId) %>
+<h2 align='center'>User Orders </h2>
 
 <ul>
     <% userOrders.forEach(userOrder => { %>
-        <li><h3><%= `${users.find(x => x.googleId === userOrder.userId).name}`%></h2></li>
-        <li><h5><%= `${users.find(x => x.googleId === userOrder.userId).email}`%></h4> </li>
-        
+        <li><h3><%= `${users.find(x => x._id.toString() === userOrder.userId.toString()).name}`%></h2></li>
+        <li><h5><%= `${users.find(x => x._id.toString() === userOrder.userId.toString()).email}`%></h4></li>        
         <table>
             <% if (Object.keys(userOrder.order).length > 0) { %>
-                <tr><th>Remove</th><th>Description</th><th>Price</th><th>Quantity</th><th>Subtotal</th></tr>            
+                <tr><th> </th><th>Description</th><th>Price</th><th>Quantity</th><th class='tdSubtotal'>Subtotal</th></tr>            
                         <% for (const d in userOrder.order) { %>
                             <tr>
-                                <% if (userOrder.userId === user.googleId) { %>
+                                <% if (userOrder.userId.toString() === user._id.toString()) { %>
                                     <td>
                                         <form action="/orderup/<%= order._id %>/checkout?_method=DELETE" method="POST">
                                             <button type='submit' class='remove' name='delete' value= <%=`${d}`%>   >🗑</button>
@@ -35,46 +34,84 @@
                                     
                                     <% } %>
  
-                            <td><%= `${d.toString().split('_').join(' ')} ` %></td>
-                            <td>
+                            <td class='tdDescription'><%= `${d.toString().split('_').join(' ')} ` %></td>
+                            <td class='tdPrice'>
                                 <% restaurant.menus[0].menu_sections.forEach(section => { %>
                                  <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price.toFixed(2) : ''}` %> 
                                 <% }) %>
                             </td>
-                            <td><%= `${userOrder.order[d]}` %> </td>
-                            <td><%= `${userOrder.order[d]*}` %> </td>
+                            <td class='tdQuantity'><%= `${userOrder.order[d]}` %> </td>
+                            <td class='tdSubtotal'>
+                                <% restaurant.menus[0].menu_sections.forEach(section => { %>
+                                    <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+(userOrder.order[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2) : ''}` %> 
+                                   <% }) %>
+                            </td>
     
                         </tr>                              
-                            <% }; %>                
+                            <% }; %>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <% let total = Number(0); %> 
+                                    <% for (const d in userOrder.order) { %>
+                                        <% restaurant.menus[0].menu_sections.forEach(section => { %>
+                                            <% section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? total += Number((userOrder.order[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2)) : '' %> 
+                                           <% }) %>
+                                        <% }; %>
+                                        <%= 'Subtotal: $'+total.toFixed(2) %>
+                                </td>
+                            </tr>                    
                 <% } else { %>
-                    <h5>They have not placed their order yet</h5>
+                    <h5>User has not placed their order yet</h5>
                     <% } %>
                 
             </table>
 
         <% }) %>
-<h2 align='center'>Total Orders Combined</h2>
+<h2 align='center'>Total Orders </h2>
         <table>
             <% if (Object.keys(totalOrder).length > 0) { %>
-                <tr><th>Description</th><th>Price</th><th>Quantity</th></tr>            
+                <tr><th>Description</th><th>Price</th><th>Quantity</th><th class='tdSubtotal'>Subtotal</th></tr>            
                         <% for (const d in totalOrder) { %>
                             <tr>
-                            <td><%= `${d.toString().split('_').join(' ')} ` %></td>
-                            <td>
+                            <td class='tdDescription'><%= `${d.toString().split('_').join(' ')} ` %></td>
+                            <td class='tdPrice'>
                                 <% restaurant.menus[0].menu_sections.forEach(section => { %>
                                  <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price.toFixed(2) : ''}` %> 
                                 <% }) %>
                             </td>
-                            <td><%= `${totalOrder[d]}` %> </td>
+                            <td class='tdQuantity'><%= `${totalOrder[d]}` %> </td>
+                            <td class='tdSubtotal'>
+                                <% restaurant.menus[0].menu_sections.forEach(section => { %>
+                                    <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+(totalOrder[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2) : ''}` %> 
+                                   <% }) %>
+                            </td>
     
                         </tr>                              
-                            <% }; %>                
+                            <% }; %>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <% let total = Number(0); %> 
+                                    <% for (const d in totalOrder) { %>
+                                        <% restaurant.menus[0].menu_sections.forEach(section => { %>
+                                            <% section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? total += Number((totalOrder[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2)) : '' %> 
+                                           <% }) %>
+                                        <% }; %>
+                                        <%= 'Total Amount: $'+total.toFixed(2) %> 
+                                </td>
+                            </tr>                
                 <% } else { %>
-                    <h5>They have not placed their order yet</h5>
+                    <h5>No orders to tally</h5>
                     <% } %>
                 
             </table>
-        
+
 </ul>
 
 

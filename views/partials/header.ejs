@@ -15,7 +15,6 @@
 <body>
   <nav>
     <a href="/orderup" <%- title==='Home' ? 'class="active"' : '' %>>Home</a>
-    <a href="/orderup/new" <%- title==='Start Group Order' ? 'class="active"' : '' %>>Start Group Order</a>
     <% if (user) { %>
       <a href="/logout" <%- title==='Log Out' ? 'class="active"' : '' %>>Log Out</a>
       <% } else { %>

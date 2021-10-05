@@ -254,3 +254,21 @@ ul {
   outline: none;
 
 }
+
+.tdDescription {
+  text-align: left;
+  width: 250px;
+}
+
+.tdPrice {
+  text-align: center;
+  width: 150px;
+}
+
+.tdQuantity {
+  text-align: center;
+}
+
+.tdSubtotal {
+  text-align: right;
+}
