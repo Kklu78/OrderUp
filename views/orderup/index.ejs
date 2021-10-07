@@ -13,7 +13,7 @@
                 <tr>
                     <th>Delete</th>
                     <th text-align='left'>Restaurant</th>
-                    <th>User List</th>
+                    <th>Users On Order</th>
                     <th>Items in Your Cart</th>
                     <th>Continue Order</th>
                 </tr>
@@ -41,7 +41,7 @@
                                             </td>
 
                                             <td>
-                                                <%=friend.email.replace(friend.email.slice(1,friend.email.length-10),'*'.repeat(friend.email.length-9))%>
+                                                <%=friend.email.replace(friend.email.slice(1,friend.email.indexOf('@')),'*'.repeat(friend.email.length-friend.email.indexOf('@')-1))%>
                                             </td>
                                         </tr>
 

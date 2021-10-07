@@ -20,7 +20,8 @@
     <% userOrders.forEach(userOrder => { %>
         <div class='userorders'>
         <li><h2><%= `${users.find(x => x._id.toString() === userOrder.userId.toString()).name}`%></h2></li>
-        <li><h3><%= `${users.find(x => x._id.toString() === userOrder.userId.toString()).email}`%></h3></li>  
+        <% let friend = users.find(x => x._id.toString() === userOrder.userId.toString()) %> 
+        <li><h3><%= `${friend.email.replace(friend.email.slice(1,friend.email.indexOf('@')),'*'.repeat(friend.email.length-friend.email.indexOf('@')-1))}`%></h3></li>  
 
         
       

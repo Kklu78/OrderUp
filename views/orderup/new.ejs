@@ -11,7 +11,7 @@
                     </label>
                     <br>
                     <label>
-                        <%= `${f.email.replace(f.email.slice(1,f.email.length-10),'*'.repeat(f.email.length-9))}` %>
+                        <%= `${f.email.replace(f.email.slice(1,f.email.indexOf('@')),'*'.repeat(f.email.length-f.email.indexOf('@')-1))}` %>
                     </label>
                 </div> 
                 <input class="checkbox" type="checkbox" name=<%=`${f._id}`%>  checked>
