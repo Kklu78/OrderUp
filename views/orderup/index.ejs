@@ -1,21 +1,29 @@
 <%- include('../partials/header') %>
+<h1>Welcome To OrderUp</h1>
+<div class='hl'></div>
 
-    <form action="/orderup/new" method="POST">
-        <label>Enter Your Zipcode</label>
-        <input type="text" name="zipcode" value='91789'>
-        <input type="submit" value="Start Group Order">
+    <form action="/orderup/new" method="POST" class='zipcodeform'>
+        <label class='zipcode'>Please Enter Your Zipcode</label>
+        <input type="text" name="zipcode" value='91789' class='zipcode'>
+        <input type="submit" value="Start Group Order" class='btn'>
     </form>
-    <%= console.log('allUserOrders') %>
         <% if (user) { %>
-            <table>
+            <h2>Open Orders</h2>
+            <table class='index-table'>
                 <tr>
+                    <th>Delete</th>
                     <th text-align='left'>Restaurant</th>
                     <th>User List</th>
-                    <th>Items in Cart</th>
-                    <th>Link</th>
+                    <th>Items in Your Cart</th>
+                    <th>Continue Order</th>
                 </tr>
                 <% userOrders.forEach(order=> { %>
-                    <tr>
+                    <tr class= 'openorders'>
+                        <td>
+                            <form action="/orderup/<%= order._id %>/index?_method=DELETE" method="POST">
+                                <button type='submit' class='remove' name='delete' value= <%=`${order._id}`%>   >🗑</button>
+                            </form>
+                        </td>
                         <td text-align='left'>
                             <%= restaurants.find(x=> x.restaurant_id.toString() === mainOrders.find(y =>
                                 y._id.toString() ===
@@ -26,22 +34,26 @@
                                 <% mainOrders.find(y=> y._id.toString() ===
                                     order.orderId.toString()).userOrders.forEach(u => { %>
                                     <%let friend=users.find(x=> x._id.toString() === allUserOrders.find(z =>
-                                        z._id.toString() === u.toString()).userId.toString())%>
+                                        (z._id.toString() === u.toString() && z.closed === false)).userId.toString())%>
                                         <tr>
                                             <td>
                                                 <%=friend.name%>
                                             </td>
 
                                             <td>
-                                                <%=friend.email%>
+                                                <%=friend.email.replace(friend.email.slice(1,friend.email.length-10),'*'.repeat(friend.email.length-9))%>
                                             </td>
                                         </tr>
 
                                         <% }) %>
                             </table>
                         </td>
-                        <td>  </td>
-                        <td><a href="/orderup/<%= order.orderId %>/order ">Link</a></td>
+                        <% let items = 0
+                            for (const x in order.order) {
+                                items += Number(order.order[x])
+                            } %>                       
+                        <td> <%= items %> </td>
+                        <td><a href="/orderup/<%= order.orderId %>/order "><img src='/images/orderup_logo2.png' id='orderlink'></a></td>
                     </tr>
                     <% }) %>
             </table>

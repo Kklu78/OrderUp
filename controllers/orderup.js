@@ -2,7 +2,6 @@ const User = require('../models/user');
 const Documenu = require('../models/documenu');
 const OrderUp = require('../models/orderup')
 const UserOrder = require('../models/userorder')
-const mongoose = require('mongoose');
 
 
 module.exports = {
@@ -13,19 +12,23 @@ module.exports = {
   checkout,
   newPage,
   removeItem,
-  removeItemCheckout
+  removeItemCheckout,
+  submitOrder,
+  submit,
+  deleteOrder
 
 };
 
+//Render Functions
 
-
+//index(homepage)
 async function index(req, res, next) {
   try {
     let users = await User.find({})
     let allUserOrders = await UserOrder.find({})
 
     if (req.user) {
-      let userOrders = await UserOrder.find({ userId: req.user._id })
+      let userOrders = await UserOrder.find({ userId: req.user._id, closed: false })
 
       let OrderIds = []
       userOrders.forEach(o =>
@@ -50,7 +53,7 @@ async function index(req, res, next) {
         users,
         userOrders,
         user: req.user,
-        title: 'Welcome to OrderUp',
+        title: '',
         order: '',
         restaurants,
         mainOrders,
@@ -65,7 +68,7 @@ async function index(req, res, next) {
         users,
         userOrders,
         user: req.user,
-        title: 'Welcome to OrderUp',
+        title: '',
         order: '',
         restaurants: '',
         mainOrders: '',
@@ -74,10 +77,6 @@ async function index(req, res, next) {
 
     }
 
-    // let orders = await OrderUp.find({})
-    // 
-    // console.log(userOrders)
-
 
 
   } catch (err) {
@@ -85,7 +84,7 @@ async function index(req, res, next) {
   }
 }
 
-
+//select restaurantpage(new.ejs)
 async function startOrder(req, res, next) {
   try {
     let friendsList = await User.find({ _id: { $ne: req.user._id } })
@@ -93,14 +92,12 @@ async function startOrder(req, res, next) {
     const params = {
       'fullmenu': true
     }
-    // let result = await Documenu.Restaurants.getByZipCode(req.body.zipcode, params);
-    // console.log(req, 'req')
+
     Documenu.Restaurants.getByZipCode(req.body.zipcode, params)
       .then(data => {
-        // console.log(data)
-        // console.log(res.data[0].menus[0].menu_sections[0].menu_items);
+
         res.render('orderup/new', {
-          title: 'Start A Group Order',
+          title: 'Select A Restaurant',
           restaurants: data.data,
           friendsList
 
@@ -112,10 +109,77 @@ async function startOrder(req, res, next) {
     res.send(err)
   }
 }
+//order page (order.ejs)
+async function newPage(req, res, next) {
+  try {
+    let createdOrder = await OrderUp.findById(req.params.id)
+    let restaurant = await Documenu.Restaurants.get(createdOrder.restaurantId)
+    let userOrders = await UserOrder.find({ userId: req.user._id, orderId: createdOrder._id })
+    let userOrder = await UserOrder.findById(userOrders[0]._id)
 
+    res.render(`orderup/order`, {
+      title: 'Order',
+      restaurant: restaurant.result,
+      order: createdOrder,
+      userOrder
+
+    })
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+//checkout page (checkout.ejs)
+async function checkout(req, res, next) {
+  try {
+    let createdOrder = await OrderUp.findById(req.params.id)
+    let restaurant = await Documenu.Restaurants.get(createdOrder.restaurantId)
+    let userOrders = await UserOrder.find({ orderId: createdOrder._id })
+    let users = await User.find({})
+
+    let totalOrder = {}
+    userOrders.forEach(o => {
+      for (const i in o.order) {
+        totalOrder[i] = totalOrder[i] ? Number(totalOrder[i]) + Number(o.order[i]) : o.order[i]
+      }
+    })
+
+    res.render('orderup/checkout', {
+      title: 'Checkout',
+      restaurant: restaurant.result,
+      order: createdOrder,
+      userOrders,
+      users,
+      totalOrder
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+//submit page (thankyou.ejs)
+async function submit(req, res, next) {
+  try {
+    let createdOrder = await OrderUp.findById(req.params.id)
+
+    res.render(`orderup/thankyou`,{
+      title: 'Thank You'
+    })
+
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+//Post Functions
+
+
+//selects restaurant //creates main order //creats user orders
+//(new.ejs)
 async function selectRetaurant(req, res, next) {
   try {
-    let newOrder = { open: true }
+    let newOrder = { }
     for (let i = (Object.keys(req.body).length - 2); i < Object.keys(req.body).length; i++) {
       newOrder[Object.keys(req.body)[i]] = req.body[Object.keys(req.body)[i]]
     }
@@ -126,11 +190,9 @@ async function selectRetaurant(req, res, next) {
     req.body = Object.assign(currentUser, req.body)
 
     let userOrders = []
-    console.log(req.body, 'req.body')
     for (let i = 0; i < Object.keys(req.body).length - 2; i++) {
       let x = {}
       let userObj = await User.findById(Object.keys(req.body)[i])
-      console.log(userObj._id)
       x['userId'] = userObj._id
       x['orderId'] = createdOrder._id
       x['order'] = {}
@@ -139,7 +201,6 @@ async function selectRetaurant(req, res, next) {
     }
     createdOrder['userOrders'] = userOrders
     await createdOrder.save()
-    console.log(createdOrder)
 
 
 
@@ -153,30 +214,28 @@ async function selectRetaurant(req, res, next) {
 
 }
 
+//updates cart//submits order
+//order.ejs
 async function checkoutOrder(req, res, next) {
   try {
-    console.log(req.body)
     let order = await OrderUp.findById(req.params.id)
-    let restaurant = await Documenu.Restaurants.get(order.restaurantId)
+    // let restaurant = await Documenu.Restaurants.get(order.restaurantId)
     let userOrders = await UserOrder.find({ userId: req.user._id, orderId: order._id })
     let userOrder = await UserOrder.findById(userOrders[0]._id)
 
-    console.log(userOrder)
 
     for (const item in req.body) {
       if (req.body[item] > 0) {
-        console.log(item)
         userOrder.order[item] = userOrder.order[item] ? Number(userOrder.order[item]) + Number(req.body[item]) : req.body[item]
       }
     }
     await userOrder.markModified('order')
     await userOrder.save()
-    console.log(userOrder)
 
 
 
 
-    if (!!req.body.update) {
+    if (req.body.update) {
       res.redirect(`/orderup/${userOrder.orderId}/order`)
     } else {
       res.redirect(`/orderup/${userOrder.orderId}/checkout`)
@@ -187,58 +246,32 @@ async function checkoutOrder(req, res, next) {
   }
 }
 
-
-async function checkout(req, res, next) {
+//archives order(will not show up as open orders)
+//checkout.ejs
+async function submitOrder(req, res, next) {
   try {
     let createdOrder = await OrderUp.findById(req.params.id)
-    let restaurant = await Documenu.Restaurants.get(createdOrder.restaurantId)
+    createdOrder.closed = true
+    await createdOrder.markModified('closed')
+    await createdOrder.save()
     let userOrders = await UserOrder.find({ orderId: createdOrder._id })
-    let users = await User.find({})
 
-    let totalOrder = {}
-    userOrders.forEach(o => {
-      for (const i in o.order) {
-        totalOrder[i] = totalOrder[i] ? Number(totalOrder[i]) + Number(o.order[i]) : o.order[i]
-
-      }
-    })
-
-    res.render('orderup/checkout', {
-      title: '',
-      restaurant: restaurant.result,
-      order: createdOrder,
-      userOrders,
-      users,
-      totalOrder
-    })
-  } catch (err) {
-    console.log(err)
-  }
-}
-
-
-async function newPage(req, res, next) {
-  try {
-    console.log(req.params)
-
-    let createdOrder = await OrderUp.findById(req.params.id)
-    let restaurant = await Documenu.Restaurants.get(createdOrder.restaurantId)
-    let userOrders = await UserOrder.find({ userId: req.user._id, orderId: createdOrder._id })
-    let userOrder = await UserOrder.findById(userOrders[0]._id)
-
-    res.render(`orderup/order`, {
-      title: '',
-      restaurant: restaurant.result,
-      order: createdOrder,
-      userOrder
-
-    })
+    for await (const o of userOrders) {
+      o.closed = true
+      await o.markModified('closed')
+      await o.save()
+    }
+    res.redirect(`/orderup/${createdOrder._id}/submit`)
 
   } catch (err) {
     console.log(err)
   }
 }
 
+
+//Delete Functions
+
+//(order.ejs)
 async function removeItem(req, res, next) {
   try {
     let createdOrder = await OrderUp.findById(req.params.id)
@@ -256,6 +289,7 @@ async function removeItem(req, res, next) {
   }
 }
 
+//(checkout.ejs)
 async function removeItemCheckout(req, res, next) {
   try {
     let createdOrder = await OrderUp.findById(req.params.id)
@@ -266,6 +300,24 @@ async function removeItemCheckout(req, res, next) {
     await userOrder.save()
 
     res.redirect(`/orderup/${userOrder.orderId}/checkout`)
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+//index.ejs
+async function deleteOrder(req, res, next) {
+  try {
+
+    let userOrder = await UserOrder.findById(req.params.id)
+    let mainOrder = await OrderUp.findById(userOrder.orderId)
+    mainOrder.userOrders.remove(req.params.id)
+    await mainOrder.markModified('userOrders')
+    await mainOrder.save()
+    await UserOrder.deleteOne({_id: req.params.id})
+
+    res.redirect(`/orderup`)
 
   } catch (err) {
     console.log(err)

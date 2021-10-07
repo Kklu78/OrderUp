@@ -1,23 +1,30 @@
 <%- include('../partials/header') %>
 
-<h1>Checkout</h1>
-<a href="/orderup/<%= order._id %>/order ">Back To Menu</a>
 
 <h2>
     <%= `${restaurant.restaurant_name}` %>
 </h2>
-<p>
+
+<p class='rest-info'>
     <%= `${restaurant.address.street}` %> <br>
         <%= `${restaurant.address.city}, ${restaurant.address.state} ${restaurant.address.postal_code}` %><br>
             <%= `${restaurant.restaurant_phone}` %> <br>
 </p>
-<h2 align='center'>User Orders </h2>
+<div class='hl'></div>
 
-<ul>
+<h2 align='center'>User Orders </h2>
+<a href="/orderup/<%= order._id %>/order ">Back To Menu</a>
+
+
+<ul >
     <% userOrders.forEach(userOrder => { %>
-        <li><h3><%= `${users.find(x => x._id.toString() === userOrder.userId.toString()).name}`%></h2></li>
-        <li><h5><%= `${users.find(x => x._id.toString() === userOrder.userId.toString()).email}`%></h4></li>        
-        <table>
+        <div class='userorders'>
+        <li><h2><%= `${users.find(x => x._id.toString() === userOrder.userId.toString()).name}`%></h2></li>
+        <li><h3><%= `${users.find(x => x._id.toString() === userOrder.userId.toString()).email}`%></h3></li>  
+
+        
+      
+        <table class='cart-tables'>
             <% if (Object.keys(userOrder.order).length > 0) { %>
                 <tr><th> </th><th>Description</th><th>Price</th><th>Quantity</th><th class='tdSubtotal'>Subtotal</th></tr>            
                         <% for (const d in userOrder.order) { %>
@@ -52,16 +59,22 @@
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>Subtotal</td>
                                 <td>
+                                    <% let itemtotal = Number(0); %> 
+                                    <% for (const d in userOrder.order) { %>
+                                            <%itemtotal += Number(userOrder.order[d])%> 
+                                           <% } %>
+                                        <%= itemtotal %> 
+                                </td>
+                                <td class='tdSubtotal'>
                                     <% let total = Number(0); %> 
                                     <% for (const d in userOrder.order) { %>
                                         <% restaurant.menus[0].menu_sections.forEach(section => { %>
                                             <% section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? total += Number((userOrder.order[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2)) : '' %> 
                                            <% }) %>
                                         <% }; %>
-                                        <%= 'Subtotal: $'+total.toFixed(2) %>
+                                        <%= '$'+total.toFixed(2) %>
                                 </td>
                             </tr>                    
                 <% } else { %>
@@ -69,8 +82,11 @@
                     <% } %>
                 
             </table>
-
+        </div>
         <% }) %>
+
+<div class='totalorders'>
+
 <h2 align='center'>Total Orders </h2>
         <table>
             <% if (Object.keys(totalOrder).length > 0) { %>
@@ -94,16 +110,22 @@
                             <% }; %>
                             <tr>
                                 <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>Total Order</td>
                                 <td>
+                                    <% let itemtotal = Number(0); %> 
+                                    <% for (const d in totalOrder) { %>
+                                            <%itemtotal += Number(totalOrder[d])%> 
+                                           <% } %>
+                                        <%= itemtotal %> 
+                                </td>
+                                <td class='tdSubtotal'>
                                     <% let total = Number(0); %> 
                                     <% for (const d in totalOrder) { %>
                                         <% restaurant.menus[0].menu_sections.forEach(section => { %>
                                             <% section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? total += Number((totalOrder[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2)) : '' %> 
                                            <% }) %>
                                         <% }; %>
-                                        <%= 'Total Amount: $'+total.toFixed(2) %> 
+                                        <%= '$'+total.toFixed(2) %> 
                                 </td>
                             </tr>                
                 <% } else { %>
@@ -111,8 +133,18 @@
                     <% } %>
                 
             </table>
+            <form action='/orderup/<%= order._id %>/submit' method='POST'>
+                <input type="submit" value="Submit Order" class="btn">
+            </form>
+
+        </div>
+
+
+            
 
 </ul>
+
+
 
 
 

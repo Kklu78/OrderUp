@@ -1,20 +1,21 @@
 <%- include('../partials/header') %>
-
     <h1>
         <%= `${restaurant.restaurant_name}` %>
     </h1>
-    <p>
+    <p class='rest-info'>
         <%= `${restaurant.address.street}` %> <br>
             <%= `${restaurant.address.city}, ${restaurant.address.state} ${restaurant.address.postal_code}` %><br>
                 <%= `${restaurant.restaurant_phone}` %> <br>
     </p>
     <div class='hl'></div>
     <div class="row">
-    <form class="orderform" action="/orderup/<%= order._id %>/checkout" method="POST">
+    <form id='orderform' class="orderform" action="/orderup/<%= order._id %>/checkout" method="POST">
+        <div class="column">
+
         <% restaurant.menus[0].menu_sections.forEach(section=> { %>
 
             <div class='sections'>
-            <h2>
+            <h2 class='section-names'>
                 <%=`${section.section_name}`%>
             </h2>
             
@@ -43,16 +44,19 @@
             </ul>
         </div>
             <% }) %>
-            <input type="submit" name="update" value='Update'>
-            <input type="submit" name="submit" value='Submit Order'>
+        </div>
+
+
+
 
     </form>
-<!-- <div class='vl'></div> -->
-<div class="cart">
-    <h2>Cart</h2>
+<div class="cart column">
+
+
+    <h2 class='cart-text'>Cart</h2>
     <table>
         <% if (Object.keys(userOrder.order).length > 0) { %>
-            <tr><th>Remove</th><th>Description</th><th>Price</th><th>Quantity</th></tr>            
+            <tr><th>Remove</th><th>Description</th><th>Price</th><th>Quantity</th><th class='tdSubtotal'>Subtotal</th></tr>            
                     <% for (const d in userOrder.order) { %>
                         <tr>
                         <td>
@@ -67,14 +71,46 @@
                             <% }) %>
                         </td>
                         <td><%= `${userOrder.order[d]}` %> </td>
+                        <td class='tdSubtotal'>
+                            <% restaurant.menus[0].menu_sections.forEach(section => { %>
+                                <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+(userOrder.order[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2) : ''}` %> 
+                               <% }) %>
+                        </td>
 
-                    </tr>                              
-                        <% }; %>                
+                    </tr class='totals'>                              
+                        <% }; %>
+                        
+
+                        <tr class='totalrow'>
+                            <td></td>
+                            <td></td>
+                            <td>Total</td>
+                            <td>
+                                <% let itemtotal = Number(0); %> 
+                                <% for (const d in userOrder.order) { %>
+                                        <%itemtotal += Number(userOrder.order[d])%> 
+                                       <% } %>
+                                    <%= itemtotal %> 
+                            </td>
+                            <td class='tdSubtotal'>
+                                <% let total = Number(0); %> 
+                                <% for (const d in userOrder.order) { %>
+                                    <% restaurant.menus[0].menu_sections.forEach(section => { %>
+                                        <% section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? total += Number((userOrder.order[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2)) : '' %> 
+                                       <% }) %>
+                                    <% }; %>
+                                    <%= '$'+total.toFixed(2) %> 
+
+                            </td>
+
+                        </tr>                
             <% } else { %>
                 <h5>No Items in Cart</h5>
                 <% } %>
             
         </table>
+        <input form='orderform' type="submit" name="update" value='Update' class='btn update'>
+        <input form='orderform' type="submit" name="submit" value='Submit Order' class='btn order'>
 
 
 

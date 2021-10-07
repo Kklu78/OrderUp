@@ -1,5 +1,5 @@
 <%- include('../partials/header') %>
-
+<h3>Friends List</h3>
     <form action="/orderup/order" method="POST">
         <%= console.log(friendsList) %> 
         <% friendsList.forEach(f=> { %>           
@@ -11,13 +11,13 @@
                     </label>
                     <br>
                     <label>
-                        <%= `${f.email}` %>
+                        <%= `${f.email.replace(f.email.slice(1,f.email.length-10),'*'.repeat(f.email.length-9))}` %>
                     </label>
                 </div> 
-                <input type="checkbox" name=<%=`${f._id}`%>  checked>
+                <input class="checkbox" type="checkbox" name=<%=`${f._id}`%>  checked>
             </div>
             <% })%>
-
+<h3>Order Information</h3>
             <div class="form">
                 <label>Restaurant</label>
                 <select name='restaurantId'>
