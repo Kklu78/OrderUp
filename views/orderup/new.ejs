@@ -1,7 +1,6 @@
 <%- include('../partials/header') %>
 <h3>Friends List</h3>
     <form action="/orderup/order" method="POST">
-        <%= console.log(friendsList) %> 
         <% friendsList.forEach(f=> { %>           
             
             <div class="form">
@@ -30,7 +29,8 @@
                 </select>
 
                 <label>Order Date</label>
-                <input type="datetime-local" name="datetime" id="datetime" value= <%=`${new Date().toISOString().slice(0,16)}`%>>
+                <% let x = new Date() %> 
+                <input type="datetime-local" name="datetime" id="datetime" value= <%=`${x.getFullYear()}-${(x.getMonth()+1).toString().padStart(2,0)}-${x.getDate().toString().padStart(2,0)}T${x.getHours()}:${x.getMinutes()}`%>>
 
                 <input type="submit" value='Start Order'>
             </div>
