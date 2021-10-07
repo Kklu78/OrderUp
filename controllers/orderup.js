@@ -222,6 +222,9 @@ async function checkoutOrder(req, res, next) {
     // let restaurant = await Documenu.Restaurants.get(order.restaurantId)
     let userOrders = await UserOrder.find({ userId: req.user._id, orderId: order._id })
     let userOrder = await UserOrder.findById(userOrders[0]._id)
+    for (const x in req.body) {
+      req.body[x] = Array.isArray(req.body[x]) ? req.body[x].reduce((a,b)=> Number(a)+Number(b)) : req.body[x]
+    }
 
 
     for (const item in req.body) {

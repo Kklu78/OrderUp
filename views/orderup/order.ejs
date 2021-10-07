@@ -1,4 +1,5 @@
 <%- include('../partials/header') %>
+
     <h1>
         <%= `${restaurant.restaurant_name}` %>
     </h1>
@@ -66,15 +67,20 @@
                         </td>  
                         <td><%= `${d.toString().split('_').join(' ')} ` %></td>
                         <td>
+                            <% let pr = [] %> 
                             <% restaurant.menus[0].menu_sections.forEach(section => { %>
-                             <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price.toFixed(2) : ''}` %> 
+                             <%section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? pr.push('$'+section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price.toFixed(2)) : ''%> 
                             <% }) %>
+                            <%= pr[0]%> 
                         </td>
                         <td><%= `${userOrder.order[d]}` %> </td>
                         <td class='tdSubtotal'>
+                            <% let st = []  %>
                             <% restaurant.menus[0].menu_sections.forEach(section => { %>
-                                <%= `${section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? '$'+(userOrder.order[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2) : ''}` %> 
+                                <%section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? st.push('$'+(userOrder.order[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2)) : ''%> 
                                <% }) %>
+                               <%= st[0]%> 
+
                         </td>
 
                     </tr class='totals'>                              
