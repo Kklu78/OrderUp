@@ -30,7 +30,7 @@
 
                 <label>Order Date</label>
                 <% let x = new Date() %> 
-                <input type="datetime-local" name="datetime" id="datetime" value= <%=`${x.getFullYear()}-${(x.getMonth()+1).toString().padStart(2,0)}-${x.getDate().toString().padStart(2,0)}T${x.getHours()}:${x.getMinutes()}`%>>
+                <input type="datetime-local" name="datetime" id="datetime" value= <%=`${x.getFullYear()}-${(x.getMonth()+1).toString().padStart(2,0)}-${x.getDate().toString().padStart(2,0)}T${x.getHours().toString().padStart(2,0)}:${x.getMinutes().toString().padStart(2,0)}`%>>
 
                 <input type="submit" value='Start Order'>
             </div>
