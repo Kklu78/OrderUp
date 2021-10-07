@@ -99,11 +99,14 @@
                                     <%= itemtotal %> 
                             </td>
                             <td class='tdSubtotal'>
-                                <% let total = Number(0); %> 
+                                <% let total = Number(0); %>
                                 <% for (const d in userOrder.order) { %>
+                                    <% let itemTotal = []; %>
                                     <% restaurant.menus[0].menu_sections.forEach(section => { %>
-                                        <% section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? total += Number((userOrder.order[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2)) : '' %> 
+                                        <%section.menu_items.find(x => x.name === d.toString().split('_').join(' ')) ? itemTotal.push(Number((userOrder.order[d]*section.menu_items.find(x => x.name === d.toString().split('_').join(' ')).price).toFixed(2))) : '' %>
                                        <% }) %>
+
+                                       <% total += itemTotal[0] %>  
                                     <% }; %>
                                     <%= '$'+total.toFixed(2) %> 
 
